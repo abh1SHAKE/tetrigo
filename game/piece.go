@@ -56,3 +56,17 @@ func (t *Tetromino) Draw(screen *ebiten.Image) {
 		}
 	}
 }
+
+func (t *Tetromino) RotateClockwise() {
+	len := len(t.Shape)
+	newShape := make([][]int, len)
+
+	for i := 0; i < len; i++ {
+		newShape[i] = make([]int, len)
+		for j := 0; j < len; j++ {
+			newShape[i][j] = t.Shape[len-j-1][i]
+		}
+	}
+
+	t.Shape = newShape
+}
