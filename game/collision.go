@@ -1,6 +1,10 @@
 package game
 
-func IsValidPosition(t Tetromino) bool {
+import (
+	"image/color"
+)
+
+func IsValidPosition(t Tetromino, grid[GridRows][GridColumns]color.RGBA) bool {
 	for row := 0; row < len(t.Shape); row++ {
 		for col := 0; col < len(t.Shape[row]); col++ {
 			if t.Shape[row][col] == 0 {
@@ -15,6 +19,10 @@ func IsValidPosition(t Tetromino) bool {
 			}
 
 			if gridColumn < 0 || gridColumn >= GridColumns {
+				return false
+			}
+
+			if grid[gridRow][gridColumn] != (color.RGBA{}) {
 				return false
 			}
 		}
