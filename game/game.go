@@ -23,7 +23,14 @@ func (g *Game) Update() error {
 	g.tickCount++
 
 	if g.tickCount % 30 == 0 {
-		g.ActivePiece.Row++
+		ghost := g.ActivePiece
+		ghost.Row++
+
+		if IsValidPosition(ghost) {
+			g.ActivePiece = ghost
+		} else {
+			// LOCK THE PIECE
+		}
 	}
 
 	return  nil
@@ -63,7 +70,13 @@ func (g *Game) handleInput() {
 	if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.IsKeyPressed(ebiten.KeyS) {
 		g.softDropTimer++
 		if g.softDropTimer >= 5 {
-			g.ActivePiece.Row++
+			ghost := g.ActivePiece
+			ghost.Row++
+			
+			if IsValidPosition(ghost) {
+				g.ActivePiece = ghost
+			}
+
 			g.softDropTimer = 0
 		}
 	} else {
@@ -83,22 +96,27 @@ func (g *Game) handleInput() {
 func (g *Game) handleMovement(direction int) {
 	if g.moveDirection != direction {
 		g.moveDirection = direction
-		g.ActivePiece.Column += direction
 		g.moveDelay = 0
 		g.moveRepeatTimer = 0
 		g.keyHeld = true
-		return
 	}
 
-	if g.keyHeld {
-		g.moveDelay++
-		if g.moveDelay >= 10 {
-			g.moveRepeatTimer++
-			
-			if g.moveRepeatTimer >= 3 {
-				g.ActivePiece.Column += direction
-				g.moveRepeatTimer = 0
+	g.moveDelay++
+	if g.moveDelay >= 10 {
+		g.moveRepeatTimer++
+		if g.moveRepeatTimer >= 3 {
+			ghost := g.ActivePiece
+			ghost.Column += direction
+			if IsValidPosition(ghost) {
+				g.ActivePiece = ghost
 			}
+			g.moveRepeatTimer = 0
+		}
+	} else if g.moveDelay == 1 {
+		ghost := g.ActivePiece
+		ghost.Column += direction
+		if IsValidPosition(ghost) {
+			g.ActivePiece = ghost
 		}
 	}
 }
